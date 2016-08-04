@@ -1,15 +1,13 @@
 # JsonQuery
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/json_query`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Simple queries against JSON-like in-memory data structures.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'json_query'
+gem "json_query"
 ```
 
 And then execute:
@@ -22,7 +20,37 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require "json_query"
+data = {
+  "foo" => "bar",
+  "spam" => {
+    "eggs" => [
+      {"name" => "qui", "password" => "x"},
+      {"name" => "quo", "password" => "y"},
+      {"name" => "qua", "password" => "z"}
+    ]
+  }
+}
+JsonQuery.perform(data: data, query: "oo")
+# => [{:path=>"foo", :value=>"bar"}]
+JsonQuery.perform(data: data, query: "foo")
+# => [{:path=>"foo", :value=>"bar"}]
+JsonQuery.perform(data: data, query: "sp.egg[nam=qui].pass")
+# => [{:path=>"spam.eggs[0].password", :value=>"x"}]
+JsonQuery.perform(data: data, query: "sp.egg[nam=qui]")
+# => [{:path=>"spam.eggs[0]", :value=>:set}]
+JsonQuery.perform(data: data, query: "sp.egg[nam=qui]", deep: true)
+# => [{:path=>"spam.eggs[0]", :value=>{"name"=>"qui", "password"=>"x"}}]
+JsonQuery.perform(data: data, query: "sp.eggs", deep: true)
+# => [{:path=>"spam.eggs", :value=>[{"name"=>"qui", "password"=>"x"}, {"name"=>"quo", "password"=>"y"}, {"name"=>"qua", "password"=>"z"}]}]
+JsonQuery.perform(data: data, query: "sp.egg[1].name")
+# => [{:path=>"spam.eggs[1].name", :value=>"quo"}]
+JsonQuery.perform(data: data, query: "sp.egg[name=qu&pass=x].name")
+# => [{:path=>"spam.eggs[0].name", :value=>"qui"}]
+JsonQuery.perform(data: data, query: "asd")
+# => []
+```
 
 ## Development
 
@@ -32,5 +60,13 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/json_query. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/olistik/json_query. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
+## License
+
+Made with <3 by [olistik](https://olisti.co).
+
+GNU Affero General Public License (AGPL) version 3
+
+- [gnu.org](https://www.gnu.org/licenses/agpl-3.0.txt)
+- [repository copy](agpl-3.0.txt)
