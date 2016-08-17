@@ -76,9 +76,9 @@ module JsonQuery
   def self.match_query_against_paths(query:, paths:, data:)
     matching_paths = paths.select do |path|
       match_query_against_path(
-      query: query,
-      path: path,
-      data_reference: data
+        query: query,
+        path: path,
+        data_reference: data
       )
     end.reverse.reduce([]) do |memo, item|
       keys_to_remove = memo.map(&:base).grep(/^#{Regexp.escape(item.base)}/).to_set
